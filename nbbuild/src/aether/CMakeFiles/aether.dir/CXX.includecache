@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/wksp/github/aether/src/aether/Aether.cpp
+Aether.h
+/wksp/github/aether/src/aether/Aether.h
+map
+-
+string
+-
+iostream
+-
+
+/wksp/github/aether/src/aether/Aether.h
+
+/wksp/github/aether/src/aether/Connection.cpp
+Connection.h
+/wksp/github/aether/src/aether/Connection.h
+
+/wksp/github/aether/src/aether/Connection.h
+

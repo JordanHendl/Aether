@@ -1,0 +1,1 @@
+/usr/bin/g++ -fPIC -g3 -gdwarf-2  -shared -Wl,-soname,libaehttp.so -o ../../lib64/libaehttp.so CMakeFiles/aehttp.dir/Parser.cpp.o 

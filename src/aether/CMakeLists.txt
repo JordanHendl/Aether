@@ -1,0 +1,29 @@
+SET( AETHER_SOURCES 
+     Aether.cpp
+     Connection.cpp
+   )
+      
+SET( AETHER_HEADERS
+     Aether.h
+     Connection.h
+   )
+
+SET( AETHER_INCLUDE_DIRS
+   )
+
+SET( AETHER_LIBRARIES
+   )
+
+ADD_LIBRARY               ( aether SHARED  ${AETHER_SOURCES} ${AETHER_HEADERS} )
+TARGET_LINK_LIBRARIES     ( aether PUBLIC  ${AETHER_LIBRARIES}                 )
+TARGET_INCLUDE_DIRECTORIES( aether PRIVATE ${AETHER_INCLUDE_DIRS}              )
+
+BUILD_TEST( TARGET aether )
+
+INSTALL( FILES  ${AETHER_HEADERS}  DESTINATION  ${INCLUDE_DIR}/aether )
+INSTALL( TARGETS aether EXPORT aetherlib 
+           RUNTIME  DESTINATION ${EXPORT_LIB_DIR}/aether
+           ARCHIVE  DESTINATION ${EXPORT_LIB_DIR}/aether
+           LIBRARY  DESTINATION ${EXPORT_LIB_DIR}/aether
+           INCLUDES DESTINATION ${EXPORT_INCLUDE_DIR} )
+

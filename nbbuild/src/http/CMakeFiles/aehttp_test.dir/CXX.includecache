@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/usr/local/KT/include/KT/Manager.h
+
+/wksp/github/aether/src/http/Parser.h
+
+/wksp/github/aether/src/http/Test.cpp
+Parser.h
+/wksp/github/aether/src/http/Parser.h
+KT/Manager.h
+-
+string
+-
+

@@ -1,0 +1,1 @@
+/usr/bin/g++ -fPIC -g3 -gdwarf-2  -shared -Wl,-soname,libaether.so -o ../../lib64/libaether.so CMakeFiles/aether.dir/Aether.cpp.o CMakeFiles/aether.dir/Connection.cpp.o 

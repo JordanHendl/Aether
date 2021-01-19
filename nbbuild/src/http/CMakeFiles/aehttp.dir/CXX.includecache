@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/wksp/github/aether/src/http/Parser.cpp
+Parser.h
+/wksp/github/aether/src/http/Parser.h
+map
+-
+string
+-
+sstream
+-
+iostream
+-
+
+/wksp/github/aether/src/http/Parser.h
+
