@@ -1,1 +1,0 @@
-/usr/bin/g++  -g3 -gdwarf-2   CMakeFiles/aether_test.dir/Test.cpp.o  -o ../../bin/aether_test -Wl,-rpath,/wksp/github/aether/nbbuild/lib64:/usr/local/KT/lib64 ../../lib64/libaether.so /usr/local/KT/lib64/libkarma_test.so 

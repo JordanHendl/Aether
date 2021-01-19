@@ -1,1 +1,0 @@
-/usr/bin/g++  -g3 -gdwarf-2   CMakeFiles/aelinux_test.dir/Test.cpp.o  -o ../../bin/aelinux_test -Wl,-rpath,/wksp/github/aether/nbbuild/lib64:/usr/local/KT/lib64 ../../lib64/libaelinux.so /usr/local/KT/lib64/libkarma_test.so /usr/lib64/libssl.so /usr/lib64/libcrypto.so ../../lib64/libaether.so 
