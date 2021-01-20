@@ -24,8 +24,8 @@
 
 #include "Connection.h"
 #include "Linux.h"
-#include <aether/Aether.h>
-#include <aether/Connection.h>
+#include <ygg/Connection.h>
+#include <ygg/Yggdrasil.h>
 #include <openssl/bio.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -40,7 +40,7 @@
 #include <assert.h>
 #include <algorithm>
 
-namespace ae
+namespace ygg
 {
   namespace lx
   {
@@ -66,7 +66,7 @@ namespace ae
       Message            message           ;
       std::string        ip_address        ;
       std::string        host_name         ;
-      ae::ConnectionType type              ;
+      ygg::ConnectionType type              ;
       bool               valid             ;
 
       /** Default constructor.
@@ -93,21 +93,21 @@ namespace ae
       this->valid             = false                      ;
       this->port              = 80                         ;
       this->socket_descriptor = 0x0                        ;
-      this->type              = ae::ConnectionType::Client ;
+      this->type              = ygg::ConnectionType::Client ;
       this->ip_address        = ""                         ;
       this->host_name         = ""                         ;
     }
     
     void ConnectionData::initialize()
     {
-      if( !ae::lx::ssl_initialized )
+      if( !ygg::lx::ssl_initialized )
       {
         SSL_library_init          () ;
         SSL_load_error_strings    () ;
         ERR_load_CRYPTO_strings   () ;
         SSL_load_error_strings    () ; 
 
-        ae::lx::ssl_initialized = true ;
+        ygg::lx::ssl_initialized = true ;
       }
       
       this->context = SSL_CTX_new( SSLv23_method() ) ;
@@ -115,12 +115,12 @@ namespace ae
       
       if( !this->context )
       {
-        ae::Aether::addError( Aether::Error::SslContextFailure ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::SslContextFailure ) ;
         this->valid = false ;
         return ;
       };
         
-      if( this->type == ae::ConnectionType::Client ) 
+      if( this->type == ygg::ConnectionType::Client ) 
       {
         SSL_set_connect_state( this->ssl ) ;
       }
@@ -135,21 +135,21 @@ namespace ae
 
       if( SSL_connect( this->ssl ) != 1 )
       {
-        ae::Aether::addError( Aether::Error::SslConnectionFailure ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::SslConnectionFailure ) ;
         this->valid = false ;
         return ;
       }
       
       if( SSL_set_fd( this->ssl , this->socket_descriptor ) != 1 )
       {
-        ae::Aether::addError( Aether::Error::SslFDFailure ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::SslFDFailure ) ;
         this->valid = false ;
         return ;
       }
       
       if( SSL_CTX_check_private_key( this->context ) != 1 )
       {
-        ae::Aether::addError( Aether::Error::SslPrivateKeyCheckFailure ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::SslPrivateKeyCheckFailure ) ;
         this->valid = false ;
         return ;
       }
@@ -170,7 +170,7 @@ namespace ae
       
       if( ::connect( this->socket_descriptor, reinterpret_cast<sockaddr*>( &this->server ), sizeof( this->server ) ) < 0 )
       {
-        ae::Aether::addError( Aether::Error::ConnectionFailure ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::ConnectionFailure ) ;
         this->valid = false ;
       }
     }
@@ -184,7 +184,7 @@ namespace ae
       
       if( ( host = gethostbyname( host_name ) ) == nullptr )
       {
-        ae::Aether::addError( Aether::Error::InvalidIP ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::InvalidIP ) ;
         this->valid = false ;
       }
       
@@ -208,7 +208,7 @@ namespace ae
       delete this->connection_data ;
     }
     
-    void Connection::connect( const char* host_name, ae::ConnectionType type, unsigned port )
+    void Connection::connect( const char* host_name, ygg::ConnectionType type, unsigned port )
     {
       data().port              = port                               ;
       data().socket_descriptor = socket( AF_INET, SOCK_STREAM, 0 )  ;
@@ -235,7 +235,7 @@ namespace ae
       // Send data.
       if( ::send( data().socket_descriptor, string.c_str(), string.size(), 0 ) < 0 )
       {
-        ae::Aether::addError( Aether::Error::SendFailure ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::SendFailure ) ;
         data().valid = false ;
       }
     }
@@ -250,7 +250,7 @@ namespace ae
       std::fill( data().reply_buffer.begin(), data().reply_buffer.end(), 0 ) ;
       if( ::recv( data().socket_descriptor, data().reply_buffer.data(), data().reply_buffer.size(), 0 ) < 0 )
       {
-        ae::Aether::addError( Aether::Error::RecieveFailure ) ;
+        ygg::Yggdrasil::addError( Yggdrasil::Error::RecieveFailure ) ;
         data().valid = false ;
       }
       

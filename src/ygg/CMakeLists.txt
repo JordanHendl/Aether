@@ -1,0 +1,29 @@
+SET( YGGDRASIL_SOURCES 
+     Yggdrasil.cpp
+     Connection.cpp
+   )
+      
+SET( YGGDRASIL_HEADERS
+     Yggdrasil.h
+     Connection.h
+   )
+
+SET( YGGDRASIL_INCLUDE_DIRS
+   )
+
+SET( YGGDRASIL_LIBRARIES
+   )
+
+ADD_LIBRARY               ( yggdrasil SHARED  ${YGGDRASIL_SOURCES} ${YGGDRASIL_HEADERS} )
+TARGET_LINK_LIBRARIES     ( yggdrasil PUBLIC  ${YGGDRASIL_LIBRARIES}                    )
+TARGET_INCLUDE_DIRECTORIES( yggdrasil PRIVATE ${YGGDRASIL_INCLUDE_DIRS}                 )
+
+BUILD_TEST( TARGET yggdrasil )
+
+INSTALL( FILES  ${YGGDRASIL_HEADERS}  DESTINATION  ${INCLUDE_DIR}/ygg )
+INSTALL( TARGETS yggdrasil EXPORT ygglib 
+           RUNTIME  DESTINATION ${EXPORT_LIB_DIR}/ygg
+           ARCHIVE  DESTINATION ${EXPORT_LIB_DIR}/ygg
+           LIBRARY  DESTINATION ${EXPORT_LIB_DIR}/ygg
+           INCLUDES DESTINATION ${EXPORT_INCLUDE_DIR} )
+

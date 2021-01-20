@@ -22,10 +22,10 @@
  * Created on January 18, 2021, 10:34 PM
  */
 
-#ifndef AETHER_IMAGE_DOWNLOAD_H
-#define AETHER_IMAGE_DOWNLOAD_H
+#ifndef YGGDRASIL_IMAGE_DOWNLOAD_H
+#define YGGDRASIL_IMAGE_DOWNLOAD_H
 
-namespace ae
+namespace ygg
 {
   /** Class to download an image from an HTTP/HTTPS webserver.
    */

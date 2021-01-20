@@ -16,18 +16,18 @@
  */
 
 /* 
- * File:   Aether.h
+ * File:   Yggdrasil.h
  * Author: Jordan Hendl
  *
  * Created on January 18, 2021, 9:32 PM
  */
 
-#ifndef AETHER_H
-#define AETHER_H
+#ifndef YGGDRASIL_H
+#define YGGDRASIL_H
 
-namespace ae
+namespace ygg
 {
-  class Aether
+  class Yggdrasil
   {
     public:
       
@@ -43,7 +43,7 @@ namespace ae
           /** Virtual method to handle a library error.
            * @param error The error to handle.
            */
-          virtual void handleError( ae::Aether::Error error ) = 0 ;
+          virtual void handleError( ygg::Yggdrasil::Error error ) = 0 ;
           
           /** Virtual deconstructor for inheritance.
            */
@@ -131,7 +131,7 @@ namespace ae
           
           /** Method to retrieve the severity of this error.
            */
-          Aether::Severity severity() const ;
+          Yggdrasil::Severity severity() const ;
 
           /** Assignment operator. Assigns this error to the input.
            * @param error The error to assign to this object.
@@ -161,12 +161,12 @@ namespace ae
       /** Static method to push an error onto this library.
        * @param error The error to handle by this library
        */
-      static void addError( Aether::Error error ) ;
+      static void addError( Yggdrasil::Error error ) ;
       
       /** Static method to allow a custom error handler to be set for this library.
        * @param error_handler The error handler to be used by this library.
        */
-      static void setErrorHandler( void ( *error_handler )( Aether::Error ) ) ;
+      static void setErrorHandler( void ( *error_handler )( Yggdrasil::Error ) ) ;
       
       /** Static method to allow a custom error handler to be set for this library.
        * @param handler The error handler to be used by this library.
@@ -174,5 +174,5 @@ namespace ae
       static void setErrorHandler( ErrorHandler* handler ) ;
   };
 }
-#endif /* AETHER_H */
+#endif /* YGGDRASIL_H */
 

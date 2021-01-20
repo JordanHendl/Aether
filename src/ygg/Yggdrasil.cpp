@@ -16,164 +16,164 @@
  */
 
 /* 
- * File:   Aether.cpp
+ * File:   Yggdrasil.cpp
  * Author: Jordan Hendl
  * 
  * Created on January 18, 2021, 9:32 PM
  */
 
-#include "Aether.h"
+#include "Yggdrasil.h"
 #include <map>
 #include <string>
 #include <iostream>
 
-namespace ae
+namespace ygg
 {
   /** The default error handler.
    * @param error The error to handle.
    */
-  static void defaultHandler( ae::Aether::Error error ) ;
+  static void defaultHandler( ygg::Yggdrasil::Error error ) ;
 
-  /** Function to convert an Aether error to a string.
+  /** Function to convert an Yggdrasil error to a string.
    * @return A string representation of the error.
    */
-  static std::string toString( Aether::Error error ) ;
+  static std::string toString( Yggdrasil::Error error ) ;
   
-  /** Function to find the severity of an Aether error.
+  /** Function to find the severity of an Yggdrasil error.
    * @param error The error to find the severity of.
    * @return The severity of the error.
    */
-  static Aether::Severity severity( Aether::Error error ) ;
+  static Yggdrasil::Severity severity( Yggdrasil::Error error ) ;
   
-  /** Structure to contain all of the Aether library's static data.
+  /** Structure to contain all of the Yggdrasil library's static data.
    */
-  struct AetherData
+  struct YggdrasilData
   {
-    typedef void ( *Callback )( Aether::Error ) ;
+    typedef void ( *Callback )( Yggdrasil::Error ) ;
     
-    Callback              error_cb ;
-    Aether::ErrorHandler* handler  ;
+    Callback                 error_cb ;
+    Yggdrasil::ErrorHandler* handler  ;
     
     /** Default constructor.
      */
-    AetherData() ;
+    YggdrasilData() ;
   };
   
-  /** Static container for the Aether library's data.
+  /** Static container for the Yggdrasil library's data.
    */
-  static AetherData data ;
+  static YggdrasilData data ;
 
-  void defaultHandler( ae::Aether::Error error )
+  void defaultHandler( ygg::Yggdrasil::Error error )
   {
-    std::cout << "-- Aether Error: " << error.toString() << "." << std::endl ;
+    std::cout << "-- Yggdrasil Error: " << error.toString() << "." << std::endl ;
   }
   
-  std::string toString( Aether::Error error )
+  std::string toString( Yggdrasil::Error error )
   {
     switch( error.error() )
     {
-      case Aether::Error::SocketCreationFailure :
+      case Yggdrasil::Error::SocketCreationFailure :
         return "Socket Creation Failure" ;
         
-      case Aether::Error::SslFailure :
+      case Yggdrasil::Error::SslFailure :
         return "SSL Failed" ;
         
-      case Aether::Error::SslContextFailure :
+      case Yggdrasil::Error::SslContextFailure :
         return "SSL Context Failure" ;
         
-      case Aether::Error::SslConnectionFailure :
+      case Yggdrasil::Error::SslConnectionFailure :
         return "SSL Connection Failure" ;
         
-      case Aether::Error::SslFDFailure : 
+      case Yggdrasil::Error::SslFDFailure : 
         return "SSL File Descriptor Failure" ;
 
-      case Aether::Error::SslPrivateKeyCheckFailure :
+      case Yggdrasil::Error::SslPrivateKeyCheckFailure :
         return "SSL Private Key Failure" ;
         
-      case Aether::Error::SendFailure :
+      case Yggdrasil::Error::SendFailure :
         return "Connection Send Failure" ;
         
-      case Aether::Error::RecieveFailure :
+      case Yggdrasil::Error::RecieveFailure :
         return "Connection Recieve Failure" ;
         
-      case Aether::Error::ConnectionFailure :
+      case Yggdrasil::Error::ConnectionFailure :
         return "Error Establishing Connection" ;
 
-      case Aether::Error::InvalidRead :
+      case Yggdrasil::Error::InvalidRead :
         return "Bad Read" ;
 
-      case Aether::Error::InvalidIP :
+      case Yggdrasil::Error::InvalidIP :
         return "Could not find the IP of the hostname" ;
 
-      case Aether::Error::None :
+      case Yggdrasil::Error::None :
         return "None" ;
 
       default : return "Unknown" ;
     }
   }
   
-  Aether::Severity severity( Aether::Error error )
+  Yggdrasil::Severity severity( Yggdrasil::Error error )
   {
     switch( error.error() )
     {
-      case Aether::Error::None :
-      default : return Aether::Severity::None ;
+      case Yggdrasil::Error::None :
+      default : return Yggdrasil::Severity::None ;
     }
   }
   
-  AetherData::AetherData()
+  YggdrasilData::YggdrasilData()
   {
-    this->error_cb = &ae::defaultHandler ;
+    this->error_cb = &ygg::defaultHandler ;
     this->handler  = nullptr             ;
   }
 
-  Aether::Error::Error()
+  Yggdrasil::Error::Error()
   {
-    this->val = Aether::Error::None ;
+    this->val = Yggdrasil::Error::None ;
   }
   
-  Aether::Error::Error( unsigned error ) 
+  Yggdrasil::Error::Error( unsigned error ) 
   {
     this->val = error ;
   }
   
-  Aether::Error& Aether::Error::operator=( unsigned error )
+  Yggdrasil::Error& Yggdrasil::Error::operator=( unsigned error )
   {
     this->val = error ;
     
     return *this ;
   }
   
-  Aether::Error::operator unsigned() const
+  Yggdrasil::Error::operator unsigned() const
   {
     return this->val ;
   }
   
-  void Aether::Error::set( unsigned error )
+  void Yggdrasil::Error::set( unsigned error )
   {
     this->val = error ;
   }
   
-  unsigned Aether::Error::error()
+  unsigned Yggdrasil::Error::error()
   {
     return this->val ;
   }
   
-  const char* Aether::Error::toString() const
+  const char* Yggdrasil::Error::toString() const
   {
     static std::string str ;
     
-    str = ae::toString( *this ) ;
+    str = ygg::toString( *this ) ;
 
     return str.c_str() ;
   }
   
-  Aether::Severity Aether::Error::severity() const
+  Yggdrasil::Severity Yggdrasil::Error::severity() const
   {
-    return ae::severity( *this ) ;
+    return ygg::severity( *this ) ;
   }
 
-  void Aether::addError( Aether::Error error )
+  void Yggdrasil::addError( Yggdrasil::Error error )
   {
     if( data.error_cb != nullptr )
     {
@@ -186,12 +186,12 @@ namespace ae
     }
   }
   
-  void Aether::setErrorHandler( void ( *error_handler )( Aether::Error ) )
+  void Yggdrasil::setErrorHandler( void ( *error_handler )( Yggdrasil::Error ) )
   {
     data.error_cb = error_handler ;
   }
   
-  void Aether::setErrorHandler( ae::Aether::ErrorHandler* handler )
+  void Yggdrasil::setErrorHandler( ygg::Yggdrasil::ErrorHandler* handler )
   {
     data.handler = handler ;
   }

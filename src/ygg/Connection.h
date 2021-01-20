@@ -22,10 +22,10 @@
  * Created on January 18, 2021, 9:56 PM
  */
 
-#ifndef AETHER_CONNECTION_H
-#define AETHER_CONNECTION_H
+#ifndef YGGDRASIL_CONNECTION_H
+#define YGGDRASIL_CONNECTION_H
 
-namespace ae
+namespace ygg
 {
   /** The type of connections available.
    */
@@ -61,7 +61,7 @@ namespace ae
        * @param port The port number to use.
        * @param type The type of connection to make.
        */
-      void connect( const char* host, ae::ConnectionType type = ae::ConnectionType::Client, unsigned port = 80 ) ;
+      void connect( const char* host, ygg::ConnectionType type = ygg::ConnectionType::Client, unsigned port = 80 ) ;
       
       /** Method to retrieve whether or not this connection is successfully connected.
        * @return Whether or not this connection is valid & working correctly.
@@ -95,7 +95,7 @@ namespace ae
   }
   
   template<typename Impl>
-  void Connection<Impl>::connect( const char* host, ae::ConnectionType type, unsigned port )
+  void Connection<Impl>::connect( const char* host, ygg::ConnectionType type, unsigned port )
   {
     this->connection.connect( host, type, port ) ;
   }

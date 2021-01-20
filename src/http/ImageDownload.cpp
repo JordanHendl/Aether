@@ -23,27 +23,29 @@
  */
 
 #include "ImageDownload.h"
-#include "Connection.h"
+#include <ygg/Connection.h>
 
 #ifdef _WIN32
   #include <win32/Win32.h>
-  using Impl = ae::win32::Win32 ;
+  using Impl = ygg::win32::Win32 ;
 #elif __linux__ 
   #include <linux/Linux.h>
-  using Impl = ae::lx::Linux ;
+  using Impl = ygg::lx::Linux ;
 #endif
 
 #include <vector>
 #include <string>
-
-namespace ae
+#include <sstream>
+#include <iostream>
+  
+namespace ygg
 {
   
   struct ImageDownloaderData
   {
     using ImageData = std::vector<unsigned char> ;
     
-    ae::Connection<Impl> connection ; ///< The connection to make to the server.
+    ygg::Connection<Impl> connection ; ///< The connection to make to the server.
     ImageData            data       ; ///< The data container of the image bytes.
     std::string          host       ; ///< The hostname of the image provider.
     std::string          location   ; ///< The location in the hostname the image is held.
@@ -54,12 +56,51 @@ namespace ae
      */
     ImageDownloaderData() ;
     
+    /** Method to build the HTTP image request message to send.
+     */
+    std::string message() const ;
+    
+    
     /** Method to parse the incoming URL into host name and location.
      * @param url The C-string url to parse.
      */
     void parseURL( const char* url ) ;
   };
   
+  std::string ImageDownloaderData::message() const
+  {
+    std::string       ret    ;
+    std::stringstream stream ;
+    
+    stream << "GET " << this->location << " HTTP/1.1\r\nHOST: " << this->host << "\r\n\r\n" ;
+    ret = stream.str() ;
+    return ret ;
+  }
+  ImageDownloaderData::ImageDownloaderData()
+  {
+    this->width    = 0  ;
+    this->height   = 0  ;
+    this->host     = "" ;
+    this->location = "" ;
+  }
+  
+  void ImageDownloaderData::parseURL( const char* url )
+  {
+    std::string full  ;
+    std::size_t begin ;
+    std::size_t end   ;
+    
+    full  = url                 ;
+    begin = full.find( "://"  ) ;
+    end   = full.find( ".com" ) ;
+    
+    if( begin != std::string::npos ) begin += 3 ; else begin = 0 ;
+    if( end   != std::string::npos ) end   += 4 ; else end   = 0 ;
+    
+    this->host     = full.substr( begin, end - begin ) ;
+    this->location = full.substr( end, full.size()   ) ;
+  }
+
   ImageDownloader::ImageDownloader()
   {
     this->image_data = new ImageDownloaderData() ;
@@ -72,32 +113,40 @@ namespace ae
   
   void ImageDownloader::download( const char* image_url )
   {
+    data().parseURL( image_url ) ;
     
+    data().connection.connect( data().host.c_str() ) ;        
+    if( data().connection.valid() )
+    {
+      data().connection.sendHttp( data().message().c_str() ) ;
+      
+      std::cout << data().connection.recieve() << std::endl ;
+    }
   }
   
   unsigned ImageDownloader::width() const
   {
-    
+    return data().width ;
   }
   
   unsigned ImageDownloader::height() const
   {
-    
+    return data().height ;
   }
   
   const unsigned char* ImageDownloader::image() const
   {
-    
+    return data().data.data() ;
   }
   
   ImageDownloaderData& ImageDownloader::data()
   {
-    
+    return *this->image_data ;
   }
   
   const ImageDownloaderData& ImageDownloader::data() const
   {
-    
+    return *this->image_data ;
   }
 }
 

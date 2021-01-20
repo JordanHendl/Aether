@@ -31,16 +31,16 @@ INCLUDE( Message   )
 INCLUDE( BuildTest )
 
 # Build options
-OPTION( BUILD_WIN32   "Whether or not the Aether::WIN32 library will be built, if available" ON  )
-OPTION( BUILD_LINUX   "Whether or not the Aether::LINUX library will be built, if available" ON  )
-OPTION( BUILD_TESTS   "Whether or not the Aether tests should be built"                      ON  )
-OPTION( BUILD_DOCS    "Whether or not to generate documentation of Aether"                   OFF )
-OPTION( BUILD_RELEASE "Whether or not the to build for release."                             OFF )
-OPTION( RUN_TESTS     "Whether or not the Aether tests should be run"                        OFF )
+OPTION( BUILD_WIN32   "Whether or not the Yggdrasil::WIN32 library will be built, if available" ON  )
+OPTION( BUILD_LINUX   "Whether or not the Yggdrasil::LINUX library will be built, if available" ON  )
+OPTION( BUILD_TESTS   "Whether or not the Yggdrasil tests should be built"                      ON  )
+OPTION( BUILD_DOCS    "Whether or not to generate documentation of Yggdrasil"                   OFF )
+OPTION( BUILD_RELEASE "Whether or not the to build for release."                                OFF )
+OPTION( RUN_TESTS     "Whether or not the Yggdrasil tests should be run"                        OFF )
 
-PROJECT( aether CXX )
+PROJECT( yggdrasil CXX )
 
-MESSAGE( INFO "Aether Library Prebuild" ) 
+MESSAGE( INFO "Yggdrasil Library Prebuild" ) 
 MESSAGE( INFO " " ) 
 
 IF( BUILD_RELEASE  )
@@ -154,4 +154,4 @@ INCLUDE ( BuildDocs )
 
 ADD_SUBDIRECTORY( src )
 
-INSTALL( EXPORT aetherlib FILE AetherConfig.cmake DESTINATION ${LIB_DIR} COMPONENT dev )
+INSTALL( EXPORT ygglib FILE YggdrasilConfig.cmake DESTINATION ${LIB_DIR} COMPONENT dev )

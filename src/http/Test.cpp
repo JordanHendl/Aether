@@ -14,10 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 #include "Parser.h"
 #include <KT/Manager.h>
 #include <string>
+#include "ImageDownload.h"
+
+#ifdef _WIN32
+  #include <win32/Win32.h>
+  using Impl = ygg::win32::Win32 ;
+#elif __linux__ 
+  #include <linux/Linux.h>
+  using Impl = ygg::lx::Linux ;
+#endif
+  
+static karma::test::Manager manager    ;
+static ygg::ImageDownloader downloader ;
+static ygg::http::Parser    parser     ;
 
 static const char *http_message = 
 {
@@ -42,7 +55,13 @@ static const char *http_message =
   "Content-Length: 15713\r\n\0\0"
 };
 
-static ae::http::Parser parser ;
+bool testImageDownload()
+{
+  downloader.download( "https://pbs.twimg.com/media/EsBb-LLXMAAjJ6p?format=png&name=900x900" ) ;
+  
+  if( downloader.width() != 900 || downloader.height() != 900 ) return false ;
+  return true ;
+}
 
 bool testParser()
 {
@@ -57,8 +76,9 @@ int main()
   karma::test::Manager manager ;
   
   parser.initialize( http_message ) ;
+  Impl::initialize( "/wksp/github/yggdrasil/cert/cert.pem", "/wksp/github/yggdrasil/cert/key.pem" ) ;
   
-  manager.add( "1) HTTP Parser Value Test: ", &testParser ) ;
-  
+  manager.add( "1) HTTP Parser Value Test"  , &testParser        ) ;
+  manager.add( "2) HTTP Image Download Test", &testImageDownload ) ;
   return manager.test( karma::test::Output::Verbose ) ;
 }

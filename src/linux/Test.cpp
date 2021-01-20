@@ -22,17 +22,17 @@
  * Created on January 18, 2021, 6:37 AM
  */
 
-#include <aether/Connection.h>
+#include <ygg/Connection.h>
 #include "Linux.h"
 #include <iostream>
 
 int main()
 {
-  using Impl = ae::lx::Linux ;
+  using Impl = ygg::lx::Linux ;
   
-  ae::Connection<Impl> connection ;
+  ygg::Connection<Impl> connection ;
   
-  Impl::initialize( "/wksp/github/aether/cert/cert.pem", "/wksp/github/aether/cert/key.pem" ) ;
+  Impl::initialize( "/wksp/github/yggdrasil/cert/cert.pem", "/wksp/github/yggdrasil/cert/key.pem" ) ;
   
   connection.connect( "pbs.twimg.com" ) ;
   connection.sendHttp( "GET /media/EsD2hGHWMAAq8D9?format=jpg&name=360x360 HTTP/1.1\r\n" ) ;

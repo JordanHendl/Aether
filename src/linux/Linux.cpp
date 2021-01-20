@@ -24,7 +24,7 @@
 
 #include "Linux.h"
 #include <string>
-namespace ae
+namespace ygg
 {
   namespace lx
   {

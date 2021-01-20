@@ -28,7 +28,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace ae
+namespace ygg
 {
   namespace http
   {

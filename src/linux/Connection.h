@@ -22,10 +22,10 @@
  * Created on January 18, 2021, 6:05 AM
  */
 
-#ifndef AETHER_LINUX_CONNECTION_H
-#define AETHER_LINUX_CONNECTION_H
+#ifndef YGGDRASIL_LINUX_CONNECTION_H
+#define YGGDRASIL_LINUX_CONNECTION_H
 
-namespace ae
+namespace ygg
 {
   /** The type of connections available.
    */
@@ -38,7 +38,7 @@ namespace ae
       public:
         Connection() ;
         ~Connection() ;
-        void connect( const char* url_path, ae::ConnectionType type, unsigned port = 80 ) ;
+        void connect( const char* url_path, ygg::ConnectionType type, unsigned port = 80 ) ;
         void sendHttp( const char* http_cmd ) ;
         bool valid() const ;
         const char* recieve() ;

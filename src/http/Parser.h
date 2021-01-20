@@ -22,10 +22,10 @@
  * Created on January 19, 2021, 1:08 AM
  */
 
-#ifndef AETHER_PARSER_H
-#define AETHER_PARSER_H
+#ifndef YGGDRASIL_PARSER_H
+#define YGGDRASIL_PARSER_H
 
-namespace ae
+namespace ygg
 {
   namespace http
   {

@@ -22,17 +22,17 @@
  * Created on January 18, 2021, 6:44 AM
  */
 
-#ifndef AETHER_LINUX_H
-#define AETHER_LINUX_H
+#ifndef YGGDRASIL_LINUX_H
+#define YGGDRASIL_LINUX_H
 
 #include "Connection.h"
 
-namespace ae
+namespace ygg
 {
   namespace lx
   {
     class Connection ;
-    /** Library class to handle all things linux in the Aether library.
+    /** Library class to handle all things linux in the Yggdrasil library.
      */
     class Linux
     {
@@ -40,7 +40,7 @@ namespace ae
         
         /** The connection in use by this library.
          */
-        using Connection = ae::lx::Connection ;
+        using Connection = ygg::lx::Connection ;
         
         /** Method to initialize this library with a valid certificate and private key.
          * @param certificate_file The path to the certificate file on disk.
