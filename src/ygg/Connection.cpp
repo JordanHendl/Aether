@@ -23,5 +23,53 @@
  */
 
 #include "Connection.h"
+#include <algorithm>
 
+namespace ygg
+{
+  Packet::Packet()
+  {
+    std::fill( this->data_ptr, this->data_ptr + sizeof( this->data_ptr ), 0 ) ;
+    this->data_size = 0 ;
+  }
+  
+  Packet::Packet( const Packet& packet )
+  {
+    *this = packet ;
+  }
+  
+  Packet::~Packet()
+  {
+    std::fill( this->data_ptr, this->data_ptr + sizeof( this->data_ptr ), 0 ) ;
+    this->data_size = 0 ;
+  }
+  
+  Packet& Packet::operator=( const Packet& packet )
+  {
+    std::copy( packet.data_ptr, packet.data_ptr + sizeof( packet.data_ptr ), this->data_ptr ) ;
+    this->data_size = packet.data_size ;
+    
+    return *this ;
+  }
+  
+  Packet makePacket( const char* data, unsigned data_amt )
+  {
+    Packet packet ;
+    
+    std::copy( data, data + data_amt, packet.data_ptr ) ;
+    packet.data_size = data_amt ;
+    
+    return packet ;
+  }
+  
+  unsigned Packet::size() const
+  {
+    return this->data_size ;
+  }
+  
+  const char* Packet::payload() const
+  {
+    return this->data_ptr ;
+  }
+}
 

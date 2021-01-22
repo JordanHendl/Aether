@@ -27,8 +27,15 @@
 
 namespace ygg
 {
+  /** Forward declare for a Yggdrasil packet.
+   */
+  class Packet ;
+
   namespace http
   {
+    
+    /** Class to manage parsing an HTTP Header.
+     */
     class Parser
     {
       public:
@@ -43,7 +50,7 @@ namespace ygg
         /** Method to initialize this object.
          * @param data The input HTTP data block to parse.
          */
-        void initialize( const char* data ) ;
+        void parse( const ygg::Packet& packet ) ;
         
         /** Method to retrieve the value of a given key.
          * @param key The key to retrieve a value of.
@@ -51,10 +58,19 @@ namespace ygg
          */
         const char* value( const char* key ) const ;
         
-        /** Method to retrieve a const pointer to the beginning of the body of the currenly parsed message.
-         * @return The const pointer pointing to the beginning of the body of the HTTP message, if available.
+        /** Method to return whether or not this parser has fully parsed a whole HTTP header.
+         * @return Whether or not this parser has parsed a whole HTTP header.
          */
-        const char* body() const ;
+        bool parsed() const ;
+        
+        /** Method to reset this object and clear all parsed data.
+         */
+        void reset() ;
+
+        /** Method to retrieve a packet containing the body-leftovers from the parsing operation, if any were found.
+         * @return A Packet containing any HTTP-body section data claimed by this parsing.
+         */
+        ygg::Packet body() const ;
 
       private:
         

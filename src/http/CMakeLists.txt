@@ -1,11 +1,13 @@
 SET( YGGDRASIL_HTTP_SOURCES 
      Parser.cpp
      ImageDownload.cpp
+     stb_image.cpp
    )
       
 SET( YGGDRASIL_HTTP_HEADERS
      Parser.h
      ImageDownload.h
+     stb_image.h
    )
 
 SET( YGGDRASIL_HTTP_INCLUDE_DIRS

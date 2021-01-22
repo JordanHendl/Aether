@@ -27,6 +27,10 @@
 
 namespace ygg
 {
+  /** Forward declare of a ygg::Packet.
+   */
+  class Packet ;
+  
   /** The type of connections available.
    */
   enum class ConnectionType ;
@@ -39,9 +43,9 @@ namespace ygg
         Connection() ;
         ~Connection() ;
         void connect( const char* url_path, ygg::ConnectionType type, unsigned port = 80 ) ;
-        void sendHttp( const char* http_cmd ) ;
+        void send( const char* cmd, unsigned size ) ;
         bool valid() const ;
-        const char* recieve() ;
+        Packet recieve( unsigned size ) ;
       private:
         struct ConnectionData *connection_data ;
         ConnectionData& data() ;

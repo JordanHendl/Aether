@@ -30,6 +30,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <sys/socket.h>
+#include <czmq.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <vector>
@@ -37,7 +38,6 @@
 #include <sstream>
 #include <iostream>
 #include <array>
-#include <assert.h>
 #include <algorithm>
 
 namespace ygg
@@ -50,11 +50,10 @@ namespace ygg
      */
     struct ConnectionData
     {
-      using Message    = std::vector<char>        ;
-      using StringList = std::vector<std::string> ;
-      using Buffer     = std::array<char, 20000>  ;
+      using Message     = std::vector<char>                   ;
+      using StringList  = std::vector<std::string>            ;
+      using Buffer      = std::array<char, ygg::PACKET_SIZE>  ;
       
-
       SSL               *ssl               ;
       SSL_CTX           *context           ;
       BIO               *read_bio          ;
@@ -66,7 +65,7 @@ namespace ygg
       Message            message           ;
       std::string        ip_address        ;
       std::string        host_name         ;
-      ygg::ConnectionType type              ;
+      ygg::ConnectionType type             ;
       bool               valid             ;
 
       /** Default constructor.
@@ -90,12 +89,12 @@ namespace ygg
     
     ConnectionData::ConnectionData()
     {
-      this->valid             = false                      ;
-      this->port              = 80                         ;
-      this->socket_descriptor = 0x0                        ;
+      this->valid             = false                       ;
+      this->port              = 80                          ;
+      this->socket_descriptor = 0x0                         ;
       this->type              = ygg::ConnectionType::Client ;
-      this->ip_address        = ""                         ;
-      this->host_name         = ""                         ;
+      this->ip_address        = ""                          ;
+      this->host_name         = ""                          ;
     }
     
     void ConnectionData::initialize()
@@ -133,7 +132,7 @@ namespace ygg
       SSL_CTX_use_PrivateKey_file ( this->context, Linux::key()        , SSL_FILETYPE_PEM ) ;
       SSL_CTX_set_verify_depth( this->context, 1 ) ;
 
-      if( SSL_connect( this->ssl ) != 1 )
+      if( SSL_do_handshake( this->ssl ) != 1 )
       {
         ygg::Yggdrasil::addError( Yggdrasil::Error::SslConnectionFailure ) ;
         this->valid = false ;
@@ -221,19 +220,10 @@ namespace ygg
       data().initialize() ;
     }
     
-    void Connection::sendHttp( const char* http_cmd )
-    {
-      std::stringstream cmd    ;
-      std::string       string ;
-      
-      // Build command with hostname.
-      cmd << std::string( http_cmd ) ;
-      cmd << "HOST: " << data().host_name << "\r\n\r\n" ;
-      
-      string = cmd.str() ;
-      
+    void Connection::send( const char* cmd, unsigned size )
+    { 
       // Send data.
-      if( ::send( data().socket_descriptor, string.c_str(), string.size(), 0 ) < 0 )
+      if( ::send( data().socket_descriptor, cmd, size, 0 ) < 0 )
       {
         ygg::Yggdrasil::addError( Yggdrasil::Error::SendFailure ) ;
         data().valid = false ;
@@ -245,19 +235,30 @@ namespace ygg
       return data().valid ;
     }
     
-    const char* Connection::recieve()
+    Packet Connection::recieve( unsigned size )
     {
-      std::fill( data().reply_buffer.begin(), data().reply_buffer.end(), 0 ) ;
-      if( ::recv( data().socket_descriptor, data().reply_buffer.data(), data().reply_buffer.size(), 0 ) < 0 )
+      Packet packet       ;
+      int    recieved_amt ;
+
+      recieved_amt = ::recv( data().socket_descriptor, data().reply_buffer.data(), size, 0 ) ;
+      
+      if( recieved_amt == 0 )
+      {
+        exit( 1 ) ;
+      }
+      if( recieved_amt < 0 )
       {
         ygg::Yggdrasil::addError( Yggdrasil::Error::RecieveFailure ) ;
         data().valid = false ;
       }
+      else
+      {
+        packet = ygg::makePacket( data().reply_buffer.data(), recieved_amt ) ;
+      }
       
-      data().reply_buffer.back() = '\0' ;
-      return data().reply_buffer.data() ;
+      return packet ;
     }
-
+    
     ConnectionData& Connection::data()
     {
       return *this->connection_data ;

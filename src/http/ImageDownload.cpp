@@ -23,8 +23,9 @@
  */
 
 #include "ImageDownload.h"
+#include "Parser.h"
+#include "stb_image.h"
 #include <ygg/Connection.h>
-
 #ifdef _WIN32
   #include <win32/Win32.h>
   using Impl = ygg::win32::Win32 ;
@@ -36,7 +37,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <iostream>
   
 namespace ygg
 {
@@ -46,12 +46,15 @@ namespace ygg
     using ImageData = std::vector<unsigned char> ;
     
     ygg::Connection<Impl> connection ; ///< The connection to make to the server.
-    ImageData            data       ; ///< The data container of the image bytes.
-    std::string          host       ; ///< The hostname of the image provider.
-    std::string          location   ; ///< The location in the hostname the image is held.
-    unsigned             width      ; ///< The width of the image.
-    unsigned             height     ; ///< The height of the image.
-    
+    ygg::http::Parser     parser     ; ///< The parser for the HTTP header.
+    ImageData             data       ; ///< The data container of the image bytes.
+    ImageData             img_bytes  ; ///< The data container of the image bytes.
+    std::string           host       ; ///< The hostname of the image provider.
+    std::string           location   ; ///< The location in the hostname the image is held.
+    unsigned              width      ; ///< The width of the image.
+    unsigned              height     ; ///< The height of the image.
+    unsigned              channels   ; ///< The number of channels in the image.
+
     /** Default constructor.
      */
     ImageDownloaderData() ;
@@ -72,7 +75,9 @@ namespace ygg
     std::string       ret    ;
     std::stringstream stream ;
     
-    stream << "GET " << this->location << " HTTP/1.1\r\nHOST: " << this->host << "\r\n\r\n" ;
+    stream << "GET "   << this->location << " HTTP/1.1\r\n" ;
+    stream << "HOST: " << this->host     << "\r\n\r\n"      ;
+
     ret = stream.str() ;
     return ret ;
   }
@@ -113,16 +118,58 @@ namespace ygg
   
   void ImageDownloader::download( const char* image_url )
   {
+    ygg::Packet    packet       ;
+    unsigned       content_size ;
+    unsigned       request_amt  ;
+    int            width        ;
+    int            height       ;
+    int            chan         ;
+    unsigned char* bytes        ;
+
     data().parseURL( image_url ) ;
-    
     data().connection.connect( data().host.c_str() ) ;        
-    if( data().connection.valid() )
+    data().connection.send( data().message().c_str(), data().message().size() ) ;
+    
+    // Parse the HTTP header.
+    while( !data().parser.parsed() ) 
     {
-      data().connection.sendHttp( data().message().c_str() ) ;
-      
-      std::cout << data().connection.recieve() << std::endl ;
+      packet = data().connection.recieve() ;
+      data().parser.parse( packet ) ;
     }
-  }
+    
+    // Find out how big our image is & reserve that much data.
+    content_size = std::atoi( data().parser.value( "Content-Length" ) ) ;
+    data().data.reserve( content_size ) ;
+    
+    // Grab any data accidentally grabbed from the header packets.
+    packet = data().parser.body() ;
+    for( unsigned i = 0; i < packet.size(); i++ )
+    {
+      data().data.push_back( packet.payload()[ i ] ) ;
+    }
+    
+    // Now, keep requesting data until we've gotten all our data.
+    request_amt = content_size - data().data.size() ;
+    while( data().data.size() < content_size && packet.size() != 0 )
+    {
+      packet = data().connection.recieve( std::min( request_amt, PACKET_SIZE ) ) ;
+      
+      for( unsigned i = 0; i < packet.size(); i++ )
+      {
+        data().data.push_back( packet.payload()[ i ] ) ;
+        request_amt-- ;
+      }
+    }
+    
+    // Now we have the .png/jpeg/whatever data, use STB to generate raw bytes * channels from it.
+    bytes = stbi_load_from_memory( data().data.data(), data().data.size(), &width, &height, &chan, 4 ) ;
+    
+    data().data = ImageDownloaderData::ImageData( bytes, bytes + ( width * height * chan ) ) ;
+      
+    data().width    = static_cast<unsigned>( width  ) ;
+    data().height   = static_cast<unsigned>( height ) ;
+    data().channels = static_cast<unsigned>( chan   ) ;
+   }
   
   unsigned ImageDownloader::width() const
   {

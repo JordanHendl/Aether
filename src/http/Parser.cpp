@@ -23,6 +23,7 @@
  */
 
 #include "Parser.h"
+#include <ygg/Connection.h>
 #include <map>
 #include <string>
 #include <sstream>
@@ -57,14 +58,18 @@ namespace ygg
     {
       using HeaderTokenMap = std::map<std::string, std::string> ;
       
-      HeaderTokenMap map       ;
-      std::string    version   ;
-      std::string    command   ;
-      std::string    code_desc ;
-      unsigned       code      ;
-      char*          body_ptr  ;
-      
-      ParserData() = default ;
+      HeaderTokenMap    map           ;
+      std::stringstream header_stream ;
+      std::string       version       ;
+      std::string       command       ;
+      std::string       code_desc     ;
+      Packet            packet        ;
+      unsigned          code          ;
+      unsigned          offset        ;
+      unsigned          total_size    ;
+      const char*       body_ptr      ;
+
+      ParserData() ;
       
       /** Method to parse the starting line of the HTTP message.
        * @param data The data to parse.
@@ -75,7 +80,7 @@ namespace ygg
       /** Helper function to parse the input HTTP data buffer.
        * @param data The HTTP data buffer to parse.
        */
-      void parse( const char* data, unsigned start ) ;
+      void parse() ;
     };
 
     std::string getKey( std::stringstream& instream )
@@ -120,18 +125,25 @@ namespace ygg
       stream.putback( val ) ;
       return val ;
     }
-      
+    
+    ParserData::ParserData()
+    {
+      this->version    = "" ;
+      this->command    = "" ;
+      this->code_desc  = "" ;
+      this->code       = 0  ;
+      this->offset     = 0  ;
+      this->total_size = 0  ;
+    }
+
     unsigned ParserData::parseStart( const char* data )
     {
       std::stringstream stream  ;
-      unsigned          index   ;
       char              token   ;
       
-      index = 0 ;
-      
-      while( ( token = data[ index ] ) != '\r' && token != '\n' && token != '\0' )
+      while( ( token = data[ this->offset ] ) != '\r' && token != '\n' && token != '\0' )
       {
-        if( token == ' ' && index != 0 )
+        if( token == ' ' && this->offset != 0 )
         {
           if( stream.str() == std::string( "HTTP/1.1" ) )
           {
@@ -158,7 +170,8 @@ namespace ygg
         {
           stream << token ;
         }
-        index++ ;
+        
+        this->offset++ ;
       }
       
       if( this->version != std::string( "" ) )
@@ -170,20 +183,26 @@ namespace ygg
         this->command = stream.str() ;
       }
       
-      return index ;
+      this->body_ptr  = data         ;
+      this->body_ptr += this->offset ;
+      return offset ;
     }
     
-    void ParserData::parse( const char* data, unsigned start )
+    void ParserData::parse()
     {
-      std::stringstream header ;
-      std::stringstream stream ;
-      std::string       line   ;
-      std::string       key    ;
-      std::string       value  ;
-      
-      header << ( data + start ) ;
+      std::stringstream header    ;
+      std::stringstream stream    ;
+      std::string       line      ;
+      std::string       key       ;
+      std::string       value     ;
+      bool              in_header ;
+      unsigned          index     ;
 
-      while( std::getline( header, line ) )
+      header << this->body_ptr ;
+      std::size_t pos = header.str().find( "\r\n\r\n") ;
+      in_header = true ;
+      index     = 0    ;
+      while( std::getline( header, line ) && in_header )
       {
         stream.clear() ;
         stream.str( std::string() ) ;
@@ -195,6 +214,15 @@ namespace ygg
         value = getValue( stream ) ;
         
         this->map[ key ] = value ;
+        
+        index += line.size() + 1 ;
+        if( index > pos )
+        {
+          in_header      = false                   ;
+          this->offset   = this->offset + pos + 4  ;
+          this->body_ptr = ( this->packet.payload() + this->offset ) ;
+          return ;
+        }
       }
     }
 
@@ -208,18 +236,38 @@ namespace ygg
       delete this->parser_data ;
     }
     
-    void Parser::initialize( const char* data )
+    void Parser::parse( const ygg::Packet& packet )
     {
-      this->data().version   = "" ;
-      this->data().command   = "" ;
-      this->data().code_desc = "" ;
-      this->data().code      = 0  ;
-
-      this->data().map.clear() ;
+      const std::string line = packet.payload()       ;
+      const std::size_t pos  = line.find( "\r\n\r\n") ;
       
-      this->data().parse( data, this->data().parseStart( data ) ) ;
+      data().packet = packet ;
+      data().header_stream << line ;
+      if( pos != std::string::npos )
+      {
+        const auto string = data().header_stream.str() ;
+        data().parseStart( string.c_str() ) ;
+        data().parse     () ;
+        data().total_size = packet.size() ;
+        data().header_stream.str( std::string() ) ; 
+      }
     }
     
+    void Parser::reset()
+    {
+      data().version   = "" ;
+      data().command   = "" ;
+      data().code_desc = "" ;
+      data().code      = 0  ;
+      data().offset    = 0  ;
+      data().map.clear() ;
+    }
+
+    bool Parser::parsed() const
+    {
+      return data().offset != 0 ;
+    }
+
     const char* Parser::value( const char* key ) const
     {
       const auto iter = data().map.find( key ) ;
@@ -229,9 +277,12 @@ namespace ygg
       return "" ;
     }
     
-    const char* Parser::body() const
+    ygg::Packet Parser::body() const
     {
-      return data().body_ptr ;
+      ygg::Packet packet ;
+        
+      packet = ygg::makePacket( data().body_ptr, data().total_size - data().offset ) ;
+      return packet ;
     }
     
     ParserData& Parser::data()

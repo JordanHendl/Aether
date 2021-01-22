@@ -16,28 +16,12 @@
  */
 
 /* 
- * File:   Test.cpp
+ * File:   stb_image.cpp
  * Author: Jordan Hendl
- *
- * Created on January 18, 2021, 6:37 AM
+ * 
+ * Created on January 22, 2021, 8:13 AM
  */
 
-#include <ygg/Connection.h>
-#include "Linux.h"
-#include <iostream>
-
-int main()
-{
-  using Impl = ygg::lx::Linux ;
-  
-  ygg::Connection<Impl> connection ;
-  std::string message = "GET /media/EsD2hGHWMAAq8D9?format=jpg&name=360x360 HTTP/1.1\r\n" ;
-  Impl::initialize( "/wksp/github/yggdrasil/cert/cert.pem", "/wksp/github/yggdrasil/cert/key.pem" ) ;
-  
-  connection.connect( "pbs.twimg.com" ) ;
-  connection.send( message.c_str(), message.size() ) ;
-  
-  std::cout << connection.recieve().payload() << std::endl ;
-  return 0;
-}
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 

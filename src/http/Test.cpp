@@ -19,6 +19,7 @@
 #include <KT/Manager.h>
 #include <string>
 #include "ImageDownload.h"
+#include "ygg/Connection.h"
 
 #ifdef _WIN32
   #include <win32/Win32.h>
@@ -32,7 +33,7 @@ static karma::test::Manager manager    ;
 static ygg::ImageDownloader downloader ;
 static ygg::http::Parser    parser     ;
 
-static const char *http_message = 
+static const char http_message[] = 
 {
   "HTTP/1.1 200 OK\r\n"
   "Accept-Ranges: bytes\r\n"
@@ -52,14 +53,14 @@ static const char *http_message =
   "x-response-time: 76\r\n"
   "x-tw-cdn: VZ\r\n"
   "x-tw-cdn: VZ\r\n"
-  "Content-Length: 15713\r\n\0\0"
+  "Content-Length: 15713\r\n\r\n\0\0"
 };
 
 bool testImageDownload()
 {
   downloader.download( "https://pbs.twimg.com/media/EsBb-LLXMAAjJ6p?format=png&name=900x900" ) ;
   
-  if( downloader.width() != 900 || downloader.height() != 900 ) return false ;
+  if( downloader.width() != 770 || downloader.height() != 686 ) return false ;
   return true ;
 }
 
@@ -75,7 +76,8 @@ int main()
 {
   karma::test::Manager manager ;
   
-  parser.initialize( http_message ) ;
+  ygg::Packet packet = ygg::makePacket( http_message, sizeof( http_message ) ) ;
+  parser.parse( packet ) ;
   Impl::initialize( "/wksp/github/yggdrasil/cert/cert.pem", "/wksp/github/yggdrasil/cert/key.pem" ) ;
   
   manager.add( "1) HTTP Parser Value Test"  , &testParser        ) ;
