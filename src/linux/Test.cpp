@@ -31,8 +31,7 @@ int main()
   using Impl = ygg::lx::Linux ;
   
   ygg::Connection<Impl> connection ;
-  std::string message = "GET /media/EsD2hGHWMAAq8D9?format=jpg&name=360x360 HTTP/1.1\r\n" ;
-  Impl::initialize( "/wksp/github/yggdrasil/cert/cert.pem", "/wksp/github/yggdrasil/cert/key.pem" ) ;
+  std::string message = "GET /media/EsD2hGHWMAAq8D9?format=jpg&name=360x360 HTTP/1.1\r\n\r\n" ;
   
   connection.connect( "pbs.twimg.com" ) ;
   connection.send( message.c_str(), message.size() ) ;

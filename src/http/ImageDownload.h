@@ -56,6 +56,11 @@ namespace ygg
        */
       unsigned height() const ;
       
+      /** Method to retrieve the number of channels inside this image.
+       * @return The amount of channels ( R, RG, RGB, RGBA ) of this image.
+       */
+      unsigned channels() const ;
+
       /** Method to retrieve the bytes associated with the image.
        * @note The image is default in RGB/RGBA with each channel being represented by a single byte.
        * @return The byte data of the downloaded image.

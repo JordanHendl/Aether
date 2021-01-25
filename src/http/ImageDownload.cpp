@@ -142,13 +142,13 @@ namespace ygg
     data().data.reserve( content_size ) ;
     
     // Grab any data accidentally grabbed from the header packets.
-    packet = data().parser.body() ;
+    packet = data().parser.leftover() ;
     for( unsigned i = 0; i < packet.size(); i++ )
     {
       data().data.push_back( packet.payload()[ i ] ) ;
     }
     
-    // Now, keep requesting data until we've gotten all our data.
+    // Now, keep requesting until we've gotten all our data.
     request_amt = content_size - data().data.size() ;
     while( data().data.size() < content_size && packet.size() != 0 )
     {
@@ -179,6 +179,11 @@ namespace ygg
   unsigned ImageDownloader::height() const
   {
     return data().height ;
+  }
+  
+  unsigned ImageDownloader::channels() const
+  {
+    return data().channels ;
   }
   
   const unsigned char* ImageDownloader::image() const

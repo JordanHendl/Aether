@@ -48,6 +48,12 @@ namespace ygg
          */
         static void initialize( const char* certificate_file, const char* private_key_file ) ;
         
+        /** Method to initialize this library with a valid certificate and private key.
+         * @param certificate_file The certificate file as bytes.
+         * @param private_key_file The private key file as bytes.
+         */
+        static void initializeFromBytes( const char* certificate_file, const char* private_key_file ) ;
+        
         /** Static method to retrieve the certificate file location of this library.
          * @return The C-string representation of this library's SSL certificate.
          */

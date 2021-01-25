@@ -277,7 +277,7 @@ namespace ygg
       return "" ;
     }
     
-    ygg::Packet Parser::body() const
+    ygg::Packet Parser::leftover() const
     {
       ygg::Packet packet ;
         

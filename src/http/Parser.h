@@ -70,7 +70,7 @@ namespace ygg
         /** Method to retrieve a packet containing the body-leftovers from the parsing operation, if any were found.
          * @return A Packet containing any HTTP-body section data claimed by this parsing.
          */
-        ygg::Packet body() const ;
+        ygg::Packet leftover() const ;
 
       private:
         

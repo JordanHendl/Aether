@@ -16,7 +16,7 @@
  */
  
 #include "Parser.h"
-#include <KT/Manager.h>
+#include <Athena/Manager.h>
 #include <string>
 #include "ImageDownload.h"
 #include "ygg/Connection.h"
@@ -29,7 +29,7 @@
   using Impl = ygg::lx::Linux ;
 #endif
   
-static karma::test::Manager manager    ;
+static athena::Manager      manager    ;
 static ygg::ImageDownloader downloader ;
 static ygg::http::Parser    parser     ;
 
@@ -74,7 +74,7 @@ bool testParser()
 
 int main()
 {
-  karma::test::Manager manager ;
+  athena::Manager manager ;
   
   ygg::Packet packet = ygg::makePacket( http_message, sizeof( http_message ) ) ;
   parser.parse( packet ) ;
@@ -82,5 +82,5 @@ int main()
   
   manager.add( "1) HTTP Parser Value Test"  , &testParser        ) ;
   manager.add( "2) HTTP Image Download Test", &testImageDownload ) ;
-  return manager.test( karma::test::Output::Verbose ) ;
+  return manager.test( athena::Output::Verbose ) ;
 }
