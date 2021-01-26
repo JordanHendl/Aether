@@ -80,6 +80,7 @@ int main()
   parser.parse( packet ) ;
   Impl::initialize( "/wksp/github/yggdrasil/cert/cert.pem", "/wksp/github/yggdrasil/cert/key.pem" ) ;
   
+  manager.initialize( "Yggdrasil HTTP Library" ) ;
   manager.add( "1) HTTP Parser Value Test"  , &testParser        ) ;
   manager.add( "2) HTTP Image Download Test", &testImageDownload ) ;
   return manager.test( athena::Output::Verbose ) ;
