@@ -38,7 +38,7 @@ OPTION( RUN_TESTS     "Whether or not the Yggdrasil tests should be run"        
 OPTION( BUILD_DOCS    "Whether or not to generate documentation of Yggdrasil"                   OFF )
 OPTION( BUILD_RELEASE "Whether or not the to build for release."                                OFF )
 
-PROJECT( Yggdrasil CXX )
+PROJECT( yggdrasil CXX )
 
 MESSAGE( INFO "Yggdrasil Library Prebuild" ) 
 MESSAGE( INFO " " ) 
@@ -133,14 +133,14 @@ MESSAGE( INFO  "├─GNU:               ${GNU}"               )
 MESSAGE( INFO  "└─MSVC:              ${MSVC}"              )
 MESSAGE( INFO " " ) 
 
-INCLUDE( KPackage ) 
 
-SET( BIN_DIR     "bin"                            )
-SET( INCLUDE_DIR "include/${CMAKE_PROJECT_NAME}"  )
-SET( LIB_DIR     "lib64"                          )
-SET( DOC_DIR     "doc"                            )
-SET( CONFIG_DIR   ${CMAKE_PROJECT_NAME}           )
-SET( DOXYGEN_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/doc )
+SET( BIN_DIR           "bin"                                 )
+SET( INCLUDE_DIR       "include"                             )
+SET( LIB_DIR           "lib64"                               )
+SET( DOC_DIR           "doc"                                 )
+SET( CONFIG_DIR         ${CMAKE_PROJECT_NAME}                )
+SET( DOXYGEN_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/doc      )
+SET( HEADER_INSTALL_DIR ${INCLUDE_DIR}/${CMAKE_PROJECT_NAME} )
 
 SET( EXPORT_BIN_DIR     "${BIN_DIR}"     )
 SET( EXPORT_INCLUDE_DIR "${INCLUDE_DIR}" )
@@ -162,7 +162,8 @@ ENDIF()
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/src ) 
 
-INCLUDE ( BuildDocs )
+INCLUDE( KPackage  )
+INCLUDE( BuildDocs )
 
 ADD_SUBDIRECTORY( src )
 

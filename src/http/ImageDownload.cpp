@@ -164,11 +164,11 @@ namespace ygg
     // Now we have the .png/jpeg/whatever data, use STB to generate raw bytes * channels from it.
     bytes = stbi_load_from_memory( data().data.data(), data().data.size(), &width, &height, &chan, 4 ) ;
     
-    data().data = ImageDownloaderData::ImageData( bytes, bytes + ( width * height * chan ) ) ;
+    data().data = ImageDownloaderData::ImageData( bytes, bytes + ( width * height * 4 ) ) ;
       
     data().width    = static_cast<unsigned>( width  ) ;
     data().height   = static_cast<unsigned>( height ) ;
-    data().channels = static_cast<unsigned>( chan   ) ;
+    data().channels = static_cast<unsigned>( 4      ) ;
    }
   
   unsigned ImageDownloader::width() const

@@ -16,7 +16,7 @@
  */
  
 #include "Parser.h"
-#include <Athena/Manager.h>
+#include <athena/Manager.h>
 #include <string>
 #include "ImageDownload.h"
 #include "ygg/Connection.h"

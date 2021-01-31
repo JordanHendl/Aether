@@ -124,7 +124,7 @@ namespace ygg
   YggdrasilData::YggdrasilData()
   {
     this->error_cb = &ygg::defaultHandler ;
-    this->handler  = nullptr             ;
+    this->handler  = nullptr              ;
   }
 
   Yggdrasil::Error::Error()

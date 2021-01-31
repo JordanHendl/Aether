@@ -244,6 +244,7 @@ namespace ygg
       
       if( recieved_amt == 0 )
       {
+        ygg::Yggdrasil::addError( Yggdrasil::Error::RecieveFailure ) ;
         exit( 1 ) ;
       }
       if( recieved_amt < 0 )
