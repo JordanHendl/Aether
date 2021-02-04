@@ -30,7 +30,6 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <sys/socket.h>
-#include <czmq.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <vector>
