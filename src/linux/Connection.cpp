@@ -184,6 +184,7 @@ namespace ygg
       {
         ygg::Yggdrasil::addError( Yggdrasil::Error::InvalidIP ) ;
         this->valid = false ;
+        return ip ;
       }
       
       address_list = reinterpret_cast<in_addr**>( host->h_addr_list ) ;
