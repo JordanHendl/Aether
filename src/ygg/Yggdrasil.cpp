@@ -66,6 +66,7 @@ namespace ygg
   void defaultHandler( ygg::Yggdrasil::Error error )
   {
     std::cout << "-- Yggdrasil Error: " << error.toString() << "." << std::endl ;
+    if( error.severity() == Yggdrasil::Severity::Fatal ) exit( -1 ) ;
   }
   
   std::string toString( Yggdrasil::Error error )
@@ -116,6 +117,7 @@ namespace ygg
   {
     switch( error.error() )
     {
+      case Yggdrasil::Error::RecieveFailure : return Yggdrasil::Severity::Fatal ;
       case Yggdrasil::Error::None :
       default : return Yggdrasil::Severity::None ;
     }

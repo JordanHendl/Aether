@@ -122,7 +122,7 @@ RECENT REVISION HISTORY:
 
 #ifndef STBI_INCLUDE_STB_IMAGE_H
 #define STBI_INCLUDE_STB_IMAGE_H
-
+#include <iostream>
 // DOCUMENTATION
 //
 // Limitations:
@@ -940,6 +940,7 @@ STBIDEF const char *stbi_failure_reason(void)
 #ifndef STBI_NO_FAILURE_STRINGS
 static int stbi__err(const char *str)
 {
+   std::cout << str << std::endl ;
    stbi__g_failure_reason = str;
    return 0;
 }

@@ -59,6 +59,7 @@ static const char http_message[] =
 bool testImageDownload()
 {
   downloader.download( "https://pbs.twimg.com/media/EsBb-LLXMAAjJ6p?format=png&name=900x900" ) ;
+  downloader.download( "https://pbs.twimg.com/media/EsBb-LLXMAAjJ6p?format=png&name=900x900" ) ;
   
   if( downloader.width() != 770 || downloader.height() != 686 ) return false ;
   return true ;

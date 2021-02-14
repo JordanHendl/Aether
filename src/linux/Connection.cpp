@@ -38,6 +38,7 @@
 #include <iostream>
 #include <array>
 #include <algorithm>
+#include <unistd.h>
 
 namespace ygg
 {
@@ -217,7 +218,7 @@ namespace ygg
       data().valid             = true                               ;
 
       data().connect()    ;
-      data().initialize() ;
+//      data().initialize() ;
     }
     
     void Connection::send( const char* cmd, unsigned size )
@@ -235,6 +236,14 @@ namespace ygg
       return data().valid ;
     }
     
+    void Connection::reset()
+    {
+      if( data().socket_descriptor != 0x0 )
+      {
+        ::close( data().socket_descriptor ) ;
+      }
+    }
+
     Packet Connection::recieve( unsigned size )
     {
       Packet packet       ;

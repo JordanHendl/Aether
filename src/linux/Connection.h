@@ -45,6 +45,7 @@ namespace ygg
         void connect( const char* url_path, ygg::ConnectionType type, unsigned port = 80 ) ;
         void send( const char* cmd, unsigned size ) ;
         bool valid() const ;
+        void reset() ;
         Packet recieve( unsigned size ) ;
       private:
         struct ConnectionData *connection_data ;

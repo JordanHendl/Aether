@@ -25,6 +25,7 @@
 #include "ImageDownload.h"
 #include "Parser.h"
 #include "stb_image.h"
+#include <ygg/Yggdrasil.h>
 #include <ygg/Connection.h>
 #ifdef _WIN32
   #include <win32/Win32.h>
@@ -37,6 +38,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <fstream>
+#include <ostream>
   
 namespace ygg
 {
@@ -126,6 +129,16 @@ namespace ygg
     int            chan         ;
     unsigned char* bytes        ;
 
+    data().connection.reset() ;
+    data().width    = 0 ;
+    data().height   = 0 ;
+    data().channels = 0 ;
+    width           = 0 ;
+    height          = 0 ;
+    chan            = 0 ;
+    data().data.clear() ;
+    data().data.shrink_to_fit() ;
+    data().parser.reset() ;
     data().parseURL( image_url ) ;
     data().connection.connect( data().host.c_str() ) ;        
     data().connection.send( data().message().c_str(), data().message().size() ) ;
@@ -164,8 +177,16 @@ namespace ygg
     // Now we have the .png/jpeg/whatever data, use STB to generate raw bytes * channels from it.
     bytes = stbi_load_from_memory( data().data.data(), data().data.size(), &width, &height, &chan, 4 ) ;
     
-    data().data = ImageDownloaderData::ImageData( bytes, bytes + ( width * height * 4 ) ) ;
-      
+    if( bytes != nullptr )
+    {
+      data().data = ImageDownloaderData::ImageData( bytes, bytes + ( width * height * 4 ) ) ;
+      free ( bytes ) ;
+    }
+    else
+    {
+      ygg::Yggdrasil::addError( Yggdrasil::Error::RecieveFailure ) ;
+    }
+    
     data().width    = static_cast<unsigned>( width  ) ;
     data().height   = static_cast<unsigned>( height ) ;
     data().channels = static_cast<unsigned>( 4      ) ;
